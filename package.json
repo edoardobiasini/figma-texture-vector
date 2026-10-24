@@ -3,12 +3,18 @@
   "private": true,
   "version": "0.1.0",
   "description": "Figma plugin: bake the Texture effect into real vector paths, so the result exports as SVG.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edoardobiasini/figma-texture-vector.git"
+  },
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
     "watch": "node build.mjs --watch",
     "typecheck": "tsc --noEmit -p .",
-    "test": "node --experimental-strip-types test/trace.test.ts"
+    "test": "node --experimental-strip-types test/trace.test.ts",
+    "package": "node build.mjs && rm -rf release && mkdir -p release/texture-to-vector && cp -R manifest.json dist README.md LICENSE release/texture-to-vector/ && cd release && zip -qr texture-to-vector-v$npm_package_version.zip texture-to-vector"
   },
   "devDependencies": {
     "@figma/plugin-typings": "^1.142.0",

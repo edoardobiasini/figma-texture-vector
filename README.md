@@ -4,6 +4,71 @@ A Figma plugin that turns layers using Figma's **Texture** effect into plain vec
 paths, so the hand-drawn look survives SVG export and opens as editable shapes in
 Illustrator, Inkscape, a browser or a codebase.
 
+## Install
+
+The plugin is not on the Figma Community yet. Until it is, you install it as a
+development plugin, which takes about a minute. You need the **Figma desktop app**: the
+browser version of Figma can't load plugins from your disk.
+
+### From the ready-made download (no tools needed)
+
+1. Open the [latest release](https://github.com/edoardobiasini/figma-texture-vector/releases/latest)
+   and download `texture-to-vector-v….zip`.
+2. Unzip it somewhere it can stay, for example `Documents/Figma plugins/`. Figma loads
+   the plugin from that folder every time it runs, so don't delete it or leave it in
+   Downloads.
+3. In the Figma desktop app, open any design file.
+4. In the menu bar, go to **Plugins → Development → Import plugin from manifest…** and
+   choose `manifest.json` inside the unzipped `texture-to-vector` folder.
+5. Figma confirms with "Texture to Vector has been imported". The plugin is now
+   available in every file on this computer.
+
+To run it, select some layers and go to **Plugins → Development → Texture to Vector**.
+You can also press <kbd>⌘</kbd> <kbd>/</kbd> (<kbd>Ctrl</kbd> <kbd>/</kbd> on Windows)
+and type "Texture".
+
+To update, download the new release and unzip it over the same folder. Figma picks up
+the new files the next time you run the plugin, so there's nothing to re-import. To
+remove the plugin, go to **Plugins → Development → Manage plugins in development** and
+choose **Remove** from the plugin's menu.
+
+### From source
+
+Needs Node 22+ and [pnpm](https://pnpm.io).
+
+```bash
+git clone https://github.com/edoardobiasini/figma-texture-vector.git
+cd figma-texture-vector
+pnpm install
+pnpm build
+```
+
+Then import `manifest.json` from the repository folder, as in step 4 above.
+`pnpm watch` rebuilds on save, and the next run of the plugin in Figma uses the new
+build.
+
+## Use
+
+Select one or more layers (an icon frame, a group, a single vector) and press
+**Vectorize texture**.
+
+| Option | What it does |
+| --- | --- |
+| Resolution | Raster pixels per design pixel: 4×, 8× or 16×. Capped at 4096 px on the longest side. |
+| Simplify | How far a path may stray from the traced edge, in px. Higher means fewer points. |
+| Min. speck | Drops islands of texture smaller than this, in px. |
+| Smooth curves | Writes cubic curves instead of straight segments. Looks the same at normal sizes and makes the file about 3× larger. |
+| Keep the selected frame's background | Includes the frame's own fill as a shape. Off by default, so icons stay transparent. |
+| Next to original / Replace | Places the result beside the source, or in its slot with the source hidden. |
+
+For the 120 px test icon traced at 4×, with the other options at their defaults: 4
+paths, ~3,300 points, 25 KB. With Smooth curves the same icon is 76 KB. 8× (the
+default) keeps more of the fine grain, so expect more points.
+
+**Download SVG** gives the compact file the plugin wrote. Exporting the result layer
+from Figma's own Export panel works too, but Figma rewrites the paths in absolute
+coordinates. At 8× that made the test icon 49 KB.
+
 ## Why the effect doesn't export
 
 Figma's SVG export does not drop the texture: it writes it as a filter.
@@ -64,41 +129,6 @@ Measured on Figma 126 before relying on it:
   0.995 on the icon with the texture on its frame, 0.995 on the same icon with the
   texture on each child, and 0.999 on the clipped ellipse.
 
-## Install (development)
-
-```bash
-pnpm install
-pnpm build
-```
-
-In **Figma Desktop**, go to Plugins → Development → **Import plugin from manifest…** and
-pick `manifest.json` in this folder. Then run it from Plugins → Development → Texture to
-Vector.
-
-`pnpm watch` rebuilds on save. Re-run the plugin in Figma to pick up the change.
-
-## Use
-
-Select one or more layers (an icon frame, a group, a single vector) and press
-**Vectorize texture**.
-
-| Option | What it does |
-| --- | --- |
-| Resolution | Raster pixels per design pixel: 4×, 8× or 16×. Capped at 4096 px on the longest side. |
-| Simplify | How far a path may stray from the traced edge, in px. Higher means fewer points. |
-| Min. speck | Drops islands of texture smaller than this, in px. |
-| Smooth curves | Writes cubic curves instead of straight segments. Looks the same at normal sizes and makes the file about 3× larger. |
-| Keep the selected frame's background | Includes the frame's own fill as a shape. Off by default, so icons stay transparent. |
-| Next to original / Replace | Places the result beside the source, or in its slot with the source hidden. |
-
-For the 120 px test icon traced at 4×, with the other options at their defaults: 4
-paths, ~3,300 points, 25 KB. With Smooth curves the same icon is 76 KB. 8× (the
-default) keeps more of the fine grain, so expect more points.
-
-**Download SVG** gives the compact file the plugin wrote. Exporting the result layer
-from Figma's own Export panel works too, but Figma rewrites the paths in absolute
-coordinates. At 8× that made the test icon 49 KB.
-
 ## Limits
 
 - Only flat colours are kept. Gradients become their first stop and image fills become
@@ -116,7 +146,10 @@ coordinates. At 8× that made the test icon 49 KB.
 ```bash
 pnpm typecheck   # tsc over src/ and test/
 pnpm test        # tracer tests on synthetic rasters with known geometry
+pnpm package     # build, then zip manifest + dist into release/ for a GitHub release
 ```
+
+To publish to the Figma Community, follow [docs/PUBLISHING.md](docs/PUBLISHING.md).
 
 | File | Role |
 | --- | --- |
@@ -138,3 +171,7 @@ is how the measurements above were taken:
 
 `bridge-trace.ts` decodes PNGs through Python's Pillow, so it needs
 `python3 -m pip install pillow`.
+
+## License
+
+[MIT](LICENSE). Free to use, copy and modify. Keep the copyright notice.
