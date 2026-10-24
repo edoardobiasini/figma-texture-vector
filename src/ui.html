@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<style>
+  :root {
+    --bg: var(--figma-color-bg, #fff);
+    --bg-2: var(--figma-color-bg-secondary, #f5f5f5);
+    --text: var(--figma-color-text, #1e1e1e);
+    --text-2: var(--figma-color-text-secondary, #757575);
+    --border: var(--figma-color-border, #e6e6e6);
+    --brand: var(--figma-color-bg-brand, #0d99ff);
+    --on-brand: var(--figma-color-text-onbrand, #fff);
+    --warn: var(--figma-color-text-warning, #b86200);
+    --danger: var(--figma-color-text-danger, #dc3412);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 11px/16px Inter, system-ui, sans-serif; }
+  main { padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  h2 { margin: 0 0 6px; font-size: 11px; font-weight: 600; }
+  .muted { color: var(--text-2); }
+  .card { background: var(--bg-2); border-radius: 6px; padding: 8px 10px; }
+  .sel-item { display: flex; justify-content: space-between; gap: 8px; }
+  .sel-item b { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sel-item span { flex-shrink: 0; }
+  .note { margin-top: 4px; color: var(--warn); }
+  .row { display: grid; grid-template-columns: 84px 1fr 44px; align-items: center; gap: 8px; min-height: 28px; }
+  .row output { text-align: right; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .seg { display: flex; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .seg label { flex: 1; text-align: center; padding: 4px 6px; cursor: pointer; }
+  .seg input { display: none; }
+  .seg label:has(input:checked) { background: var(--bg-2); font-weight: 600; }
+  .check { display: flex; align-items: center; gap: 6px; min-height: 24px; }
+  input[type=range] { width: 100%; accent-color: var(--brand); }
+  button { font: inherit; border-radius: 5px; padding: 6px 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; }
+  button.primary { background: var(--brand); color: var(--on-brand); border-color: transparent; font-weight: 600; width: 100%; padding: 8px; }
+  button:disabled { opacity: .45; cursor: default; }
+  .progress { height: 3px; background: var(--bg-2); border-radius: 2px; overflow: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--brand); transition: width .15s; }
+  #status { min-height: 16px; }
+  #status.error { color: var(--danger); }
+  .preview { display: grid; place-items: center; height: 140px; border-radius: 6px; padding: 8px;
+    background: repeating-conic-gradient(var(--bg-2) 0 25%, var(--bg) 0 50%) 0 0 / 12px 12px; }
+  .preview svg { max-width: 100%; max-height: 100%; width: auto; height: auto; }
+  .actions { display: flex; gap: 6px; }
+  .actions button { flex: 1; }
+  ul.warnings { margin: 4px 0 0; padding-left: 16px; color: var(--warn); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <h2>Selection</h2>
+    <div id="selection" class="card muted">Select layers that use the Texture effect.</div>
+  </section>
+
+  <section>
+    <h2>Trace</h2>
+    <div class="row">
+      <span>Resolution</span>
+      <div class="seg" id="quality">
+        <label><input type="radio" name="q" value="4">4×</label>
+        <label><input type="radio" name="q" value="8" checked>8×</label>
+        <label><input type="radio" name="q" value="16">16×</label>
+      </div>
+      <output id="q-out"></output>
+    </div>
+    <div class="row">
+      <span title="How far the path may stray from the traced edge, in px">Simplify</span>
+      <input id="simplify" type="range" min="0" max="0.25" step="0.01" value="0.04">
+      <output id="simplify-out"></output>
+    </div>
+    <div class="row">
+      <span title="Drop specks smaller than this, in px">Min. speck</span>
+      <input id="speck" type="range" min="0" max="3" step="0.1" value="0.4">
+      <output id="speck-out"></output>
+    </div>
+    <label class="check"><input id="smooth" type="checkbox"> Smooth curves <span class="muted">(about 3× larger file)</span></label>
+    <label class="check"><input id="background" type="checkbox"> Keep the selected frame's background</label>
+  </section>
+
+  <section>
+    <h2>Output</h2>
+    <div class="seg" id="placement">
+      <label><input type="radio" name="p" value="beside" checked>Next to original</label>
+      <label><input type="radio" name="p" value="replace">Replace (hide original)</label>
+    </div>
+  </section>
+
+  <section style="display:grid; gap:8px">
+    <button id="run" class="primary" disabled>Vectorize texture</button>
+    <div class="progress"><i id="bar"></i></div>
+    <div id="status" class="muted"></div>
+  </section>
+
+  <section id="result" hidden>
+    <h2 id="result-title">Result</h2>
+    <div id="preview" class="preview"></div>
+    <p id="stats" class="muted" style="margin:6px 0"></p>
+    <ul id="warnings" class="warnings" hidden></ul>
+    <div class="actions">
+      <button id="copy">Copy SVG</button>
+      <button id="download">Download SVG</button>
+    </div>
+  </section>
+</main>
+<script>/*__UI_JS__*/</script>
+</body>
+</html>
