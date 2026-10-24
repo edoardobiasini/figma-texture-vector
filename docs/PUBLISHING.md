@@ -7,10 +7,26 @@ reviews the plugin before it goes public.
 Sources: [Publish plugins to the Figma Community](https://help.figma.com/hc/en-us/articles/360042293394-Publish-plugins-to-the-Figma-Community),
 [Publishing to the Community (BYFP 5)](https://help.figma.com/hc/en-us/articles/4407531267607--BYFP-5-Publishing-to-the-Community).
 
+## Status
+
+Version 0.1.0 was submitted on 2026-10-24 and is **in review**.
+
+- **Author:** Edo (individual creator), from the edoardo@patterns.digital account.
+- **Plugin ID:** `1695932217794835681`.
+- **Community page:** https://www.figma.com/community/plugin/1695932217794835681,
+  which goes live when the review is approved.
+
 ## Before you start
 
-- **Two-factor authentication** must be on for your Figma account (Settings →
+- **Two-factor authentication** must be on for the account you publish from (Settings →
   Security). Figma refuses to publish without it.
+- **Mind which account a tab belongs to.** The desktop app can be signed into several
+  accounts, and each file tab runs under the account that opened it. Start publishing
+  from a file opened with the account that has 2FA. Otherwise the dialog keeps saying
+  "You must enable two-factor authentication to publish". If you've just turned 2FA
+  on, quit and reopen Figma first.
+- **A file you can edit.** Plugins, including the publish dialog, are unavailable in
+  view-only files.
 - **The Figma desktop app.** Publishing isn't possible from the browser.
 - **A fresh build, imported from this repository.** Run `pnpm build`, then import
   `manifest.json` from the repository folder (not from an unzipped release), so the ID
@@ -27,14 +43,14 @@ Sources: [Publish plugins to the Figma Community](https://help.figma.com/hc/en-u
 
 ## The plugin ID
 
-`manifest.json` ships with a placeholder ID, `texture-to-vector-dev`, which Figma
-won't publish. The publish dialog flags it with **"Invalid ID in manifest.json"** and
-offers **Generate ID**.
+`manifest.json` carries the ID Figma assigned on the first publish,
+`1695932217794835681`. **Never change it.** Every update must be published with this
+ID, or Figma treats the upload as a new, separate plugin.
 
-1. Click **Generate ID** and copy the value it shows.
-2. Paste it into `manifest.json` as `"id"`, replacing the placeholder.
-3. Commit that change right away. Every future update must be published with the same
-   ID. Losing it means the next upload becomes a new, separate plugin.
+On the first publish the manifest still had a placeholder. The dialog flagged it with
+**"Invalid ID in manifest.json"** and offered **Generate ID**, and the generated value
+went into `manifest.json` before publishing. Only a fork published as its own plugin
+would need to go through that again.
 
 ## Publish
 
@@ -61,7 +77,7 @@ offers **Generate ID**.
      > how much to simplify, and whether to keep the original. Copy or download the SVG
      > straight from the panel.
 
-   - **Category:** Design tools
+   - **Category:** Design tools › Import & export
 5. **Choose some images.** Upload the icon, the thumbnail and any carousel images.
 6. **Data security** is optional. If you fill it in, the honest answers are short: the
    plugin makes no network requests (`networkAccess` is `none`), stores nothing, and

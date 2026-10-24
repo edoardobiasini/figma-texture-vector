@@ -6,9 +6,13 @@ Illustrator, Inkscape, a browser or a codebase.
 
 ## Install
 
-The plugin is not on the Figma Community yet. Until it is, you install it as a
-development plugin, which takes about a minute. You need the **Figma desktop app**: the
-browser version of Figma can't load plugins from your disk.
+Texture to Vector has been submitted to the Figma Community and is in review. Once it's
+approved, it will be one click away on its
+[Community page](https://www.figma.com/community/plugin/1695932217794835681).
+
+Until then, install it as a development plugin, which takes about a minute. You need
+the **Figma desktop app**: the browser version of Figma can't load plugins from your
+disk.
 
 ### From the ready-made download (no tools needed)
 
