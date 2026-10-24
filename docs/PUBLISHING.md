@@ -15,14 +15,15 @@ Sources: [Publish plugins to the Figma Community](https://help.figma.com/hc/en-u
 - **A fresh build, imported from this repository.** Run `pnpm build`, then import
   `manifest.json` from the repository folder (not from an unzipped release), so the ID
   you'll get in the next section lands in the file you commit.
-- **The listing assets**:
-  - an **icon**, 128 × 128 px PNG;
-  - a **thumbnail**, 1920 × 1080 px image or video;
+- **The listing assets**, both ready in [`docs/community/`](community/):
+  - the **icon**, [`icon.png`](community/icon.png), 128 × 128 px;
+  - the **thumbnail**, [`cover.png`](community/cover.png), 1920 × 1080 px. It shows a
+    drawing traced by the plugin, half as the Texture effect and half in outline mode.
   - optionally, a **carousel** of up to 9 images or videos and a **playground file**
     that people can open to try the plugin.
 
-  A good thumbnail is a before/after: the textured original next to its vector result
-  in outline mode.
+  To change them, edit `docs/community/build.mjs` and run
+  `node docs/community/build.mjs`. It needs Google Chrome installed.
 
 ## The plugin ID
 
